@@ -46,3 +46,19 @@ class Server:
         start, end = index_value_range
         filtered_data = data[start: end]
         return [] if not filtered_data else filtered_data
+
+    def get_hyper(self, page: int = 1, page_size: int = 10) -> dict:
+        data = self.get_page(page, page_size)
+        total_data = len(self.dataset())
+        total_pages = total_data / page_size
+        next_page = page + 1 if page <= total_pages else None
+        prev_page = page - 1 if page - 1 > 0 else None
+        hyper = {
+            'page_size': page_size,
+            'page': page,
+            'data': data,
+            'next_page': next_page,
+            'prev_page': prev_page,
+            'total_pages': int(total_pages)
+        }
+        return hyper

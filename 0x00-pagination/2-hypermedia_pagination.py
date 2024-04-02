@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""contains a module for hyper
+functions
+"""
 import csv
 import math
 from typing import List

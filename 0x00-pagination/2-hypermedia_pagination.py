@@ -52,7 +52,7 @@ class Server:
         data = self.get_page(page, page_size)
         total_data = len(self.dataset())
         total_pages = total_data / page_size
-        next_page = page + 1 if page <= total_pages else None
+        next_page = page + 1 if page < total_pages else None
         prev_page = page - 1 if page - 1 > 0 else None
         hyper = {
             'page_size': page_size,

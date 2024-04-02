@@ -21,7 +21,8 @@ class FIFOCache(BaseCaching):
                 print(f"DISCARD: {pop_key}")
                 del my_dict[pop_key]
             my_dict[key] = item
-
+        else:
+            return None
     def get(self, key):
         """get values based on key"""
         value = self.cache_data[key] if key and key \

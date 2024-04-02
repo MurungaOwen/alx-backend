@@ -53,8 +53,7 @@ class Server:
     def get_hyper(self, page: int = 1, page_size: int = 10) -> dict:
         """to get the hper link"""
         data = self.get_page(page, page_size)
-        total_data = len(self.dataset())
-        total_pages = total_data / page_size
+        total_pages = len(self.dataset()) / page_size
         next_page = page + 1 if page < total_pages else None
         prev_page = page - 1 if page - 1 > 0 else None
         hyper = {

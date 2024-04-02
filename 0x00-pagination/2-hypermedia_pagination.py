@@ -48,6 +48,7 @@ class Server:
         return [] if not filtered_data else filtered_data
 
     def get_hyper(self, page: int = 1, page_size: int = 10) -> dict:
+        """to get the hper link"""
         data = self.get_page(page, page_size)
         total_data = len(self.dataset())
         total_pages = total_data / page_size

@@ -12,6 +12,9 @@ class FIFOCache(BaseCaching):
         super().__init__()
 
     def put(self, key, item):
+        """
+        insert data into cache
+        """
         my_dict = self.cache_data
         if key and item:
             if len(my_dict) < self.MAX_ITEMS:
@@ -23,6 +26,7 @@ class FIFOCache(BaseCaching):
             my_dict[key] = item
         else:
             return None
+
     def get(self, key):
         """get values based on key"""
         value = self.cache_data[key] if key and key \

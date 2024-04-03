@@ -12,6 +12,9 @@ class LIFOCache(BaseCaching):
         super().__init__()
 
     def put(self, key, item):
+        """
+        insert data in cache
+        """
         my_dict = self.cache_data
         if key and item:
             if len(my_dict) < self.MAX_ITEMS:

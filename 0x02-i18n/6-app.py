@@ -1,5 +1,10 @@
+#!/usr/bin/env python3
+"""
+flask app
+"""
 from flask import request, g, Flask, render_template
 from flask_babel import Babel, _
+
 
 app = Flask(__name__)
 babel = Babel(app)
@@ -43,7 +48,10 @@ def index():
     """
     home page
     """
-    return render_template('5-index.html')
+    logged = _('logged_in_as %(username)s', username=g.user['name'])
+    not_logged = _('not_logged_in')
+    return render_template(
+        '6-index.html', logged=logged, not_logged=not_logged)
 
 
 if __name__ == '__main__':

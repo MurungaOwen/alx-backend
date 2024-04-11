@@ -40,5 +40,5 @@ msgstr "You are not logged in."
 
 #: 7-app.py:60 templates/7-index.html:11
 msgid "current_time_is"
-msgstr "current time is %(time)s"
+msgstr "The current time is %(current_time)s."
 

@@ -57,7 +57,7 @@ def home():
     
     time = pytz.timezone(tz)
     time_now = format_time(datetime.now(time))
-    current_time = _("current_time_is", time=str(time_now))
+    current_time = _("current_time_is", current_time=str(time_now))
     print(f"time now is  {current_time}")
     return render_template(
         '7-index.html',

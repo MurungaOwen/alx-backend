@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """implimentaion of flask app"""
 from flask import Flask, render_template, request
-from flask_babel import Babel
+from flask_babel import Babel, _
 
 
 class Config:
@@ -18,9 +18,15 @@ babel = Babel(app)
 
 
 @app.route('/')
-def single():
+def home():
     """renders a single html helloworld"""
-    return render_template('4-index.html')
+    home_title = _("home_title")
+    home_header = _("home_header")
+    return render_template(
+        '4-index.html',
+        home_title=home_title,
+        home_header=home_header
+    )
 
 
 @babel.localeselector

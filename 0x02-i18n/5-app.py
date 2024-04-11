@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """implimentaion of flask app"""
 from flask import Flask, render_template, request, g
-from flask_babel import Babel
+from flask_babel import Babel, _
 
 
 class Config:
@@ -40,9 +40,21 @@ def before_request():
 
 
 @app.route('/')
-def single():
-    """renders a single html helloworld"""
-    return render_template('5-index.html')
+def home():
+    """renders a logged in user"""
+    logged_in_as = _("logged_in_as", username=g.user["name"]) \
+        if g.user else None
+    not_logged_in = _("not_logged_in")
+    home_header = _("home_header")
+    home_title = _("home_title")
+
+    return render_template(
+        '5-index.html',
+        home_header=home_header,
+        home_title=home_title,
+        logged_in_as=logged_in_as,
+        not_logged_in=not_logged_in
+    )
 
 
 @babel.localeselector

@@ -40,5 +40,5 @@ msgstr "Vous n'êtes pas connecté."
 
 #: templates/7-index.html:11
 msgid "current_time_is"
-msgstr ""
+msgstr "Current time is %(time)s"
 

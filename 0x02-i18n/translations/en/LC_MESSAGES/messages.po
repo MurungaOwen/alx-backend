@@ -40,5 +40,5 @@ msgstr "You are not logged in."
 
 #: templates/7-index.html:11
 msgid "current_time_is"
-msgstr ""
+msgstr "current time is %(time)s"
 

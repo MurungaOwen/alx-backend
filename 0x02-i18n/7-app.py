@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """implimentaion of flask app"""
 from flask import Flask, render_template, request, g
-from flask_babel import Babel
+from flask_babel import Babel, _, format_time
+from babel import numbers
 from typing import (Any, Dict)
 import pytz
 
@@ -42,13 +43,26 @@ def before_request() -> None:
 
 
 @app.route('/')
-def single() -> str:
+def home():
     """renders a single html helloworld"""
-    return render_template('5-index.html')
+    logged_in_as = _("logged_in_as", username=g.user["name"]) \
+        if g.user else None
+    not_logged_in = _("not_logged_in")
+    home_header = _("home_header")
+    home_title = _("home_title")
+
+    current_time = _("current_time_is", time=format_time())
+    return render_template(
+        '5-index.html',
+        home_header=home_header,
+        home_title=home_title,
+        logged_in_as=logged_in_as,
+        not_logged_in=not_logged_in
+    )
 
 
 @babel.localeselector
-def get_locale() -> str:
+def get_locale():
     """selects the appropriate locale"""
     locale_from_url = request.args.get('locale')
     if locale_from_url and locale_from_url in app.config['LANGUAGES']:

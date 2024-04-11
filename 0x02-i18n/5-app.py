@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
-"""
-flask app
-"""
-from flask import Flask, request, g, render_template
-from flask_babel import Babel, _
+"""implimentaion of flask app"""
+from flask import Flask, render_template, request, g
+from flask_babel import Babel
+
+
+class Config:
+    """default languages"""
+    LANGUAGES = ["en", "fr"]
+    BABEL_DEFAULT_LOCALE = "en"
+    BABEL_DEFAULT_TIMEZONE = "UTC"
+
 
 app = Flask(__name__)
+app.config.from_object(Config)
+app.url_map.strict_slashes = False
 babel = Babel(app)
 
-
-# Mock user table
 users = {
     1: {"name": "Balou", "locale": "fr", "timezone": "Europe/Paris"},
     2: {"name": "Beyonce", "locale": "en", "timezone": "US/Central"},
@@ -18,36 +24,34 @@ users = {
 }
 
 
-def get_user(user_id):
-    """get user based on id"""
-    return users.get(user_id)
+def get_user():
+    """return a user dictionary or none"""
+    if request.args.get('login_as'):
+        login_id = int(request.args.get('login_as'))
+        if login_id in users:
+            return users.get(login_id)
+    return None
 
 
 @app.before_request
 def before_request():
-    """
-    run before all
-    """
-    user_id = request.args.get('login_as')
-    g.user = get_user(int(user_id)) if user_id else None
-
-
-def get_locale():
-    user_locale = None
-    if g.user:
-        user_locale = g.user.get('locale')
-    return user_locale if user_locale in ['en', 'fr'] else 'en'
+    """find a user"""
+    g.user = get_user()
 
 
 @app.route('/')
-def index():
-    """
-    home page
-    """
-    logged = _('logged_in_as %(username)s', username=g.user['name'])
-    not_logged = _('not_logged_in')
-    return render_template(
-        '5-index.html', logged=logged, not_logged=not_logged)
+def single():
+    """renders a single html helloworld"""
+    return render_template('5-index.html')
+
+
+@babel.localeselector
+def get_locale():
+    """selects the appropriate locale"""
+    local = request.args.get('locale')
+    if local in app.config['LANGUAGES']:
+        return local
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
 if __name__ == '__main__':

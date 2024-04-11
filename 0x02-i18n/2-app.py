@@ -2,7 +2,7 @@
 """
 flask app
 """
-from flask import request, Flask
+from flask import request, Flask, render_template
 from flask_babel import Babel
 
 
@@ -18,6 +18,12 @@ class Config:
 
 babel = Babel(app)
 app.config.from_object(Config)
+
+
+@app.route("/")
+def home() -> str:
+    """home page"""
+    return render_template("2-index.html")
 
 
 @babel.localeselector

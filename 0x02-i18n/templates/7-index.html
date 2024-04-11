@@ -8,6 +8,7 @@
     </h1>
     {% if g.user %}
         <p>{{ _('logged_in_as', username=g.user.name) }}</p>
+        <p>{{ _('current_time_is', current_time=get_timezone()) }} </p>
     {% else %}
         <p>{{ _('not_logged_in') }}</p>
     {% endif %}

@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-    <title>
-        {{home_title}}
-    </title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{home_title}}</title>
+</head>
+<body>
     <h1>
         {{home_header}}
     </h1>
     {% if g.user %}
         <p>{{logged_in_as}}</p>
-        <p>{{current_time_is}} </p>
     {% else %}
         <p>{{not_logged_in}}</p>
     {% endif %}
+    <p>{{current_time}}</p>
+</body>
 </html>

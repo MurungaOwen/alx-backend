@@ -3,7 +3,9 @@
 from flask import Flask, render_template, request, g
 from flask_babel import Babel, _, format_time
 from babel import numbers
+from datetime import datetime
 from typing import (Any, Dict)
+from pytz import timezone
 import pytz
 
 
@@ -50,14 +52,20 @@ def home():
     not_logged_in = _("not_logged_in")
     home_header = _("home_header")
     home_title = _("home_title")
-
-    current_time = _("current_time_is", time=format_time())
+    tz = str(get_timezone())
+    print(f"tz is {tz}")
+    
+    time = pytz.timezone(tz)
+    time_now = format_time(datetime.now(time))
+    current_time = _("current_time_is", time=str(time_now))
+    print(f"time now is  {current_time}")
     return render_template(
-        '5-index.html',
+        '7-index.html',
         home_header=home_header,
         home_title=home_title,
         logged_in_as=logged_in_as,
-        not_logged_in=not_logged_in
+        not_logged_in=not_logged_in,
+        current_time=current_time
     )
 
 
@@ -83,12 +91,12 @@ def get_locale():
 @babel.timezoneselector
 def get_timezone():
     """gets the timezone of user"""
-    timezone = request.args.get('timezone', '').strip()
-    if not timezone and g.user:
-        timezone = g.user['timezone']
-
+    user_timezone = request.args.get('timezone', '').strip()
+    if not user_timezone:
+        user_timezone = g.user['timezone'] if g.user else "UTC"
     try:
-        return pytz.timezone(timezone).zone
+        timezone(user_timezone)        
+        return user_timezone
     except pytz.exceptions.UnknownTimeZoneError:
         return app.config['BABEL_DEFAULT_TIMEZONE']
 

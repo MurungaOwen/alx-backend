@@ -1,68 +1,53 @@
-const createPushNotificationsJobs = require('./8-job');
 const kue = require('kue');
-const redis = require('redis');
-const assert = require('assert');
+const chai = require('chai');
+const sinon = require('sinon');
+const createPushNotificationsJobs = require('./8-job');
+
+// Use chai expect syntax
+const expect = chai.expect;
 
 describe('createPushNotificationsJobs', () => {
-  let queue;
-
-  // Create a Redis client
-  const client = redis.createClient();
+  let queueStub;
 
   beforeEach(() => {
-    // Use the client to create the Kue queue in test mode
-    queue = kue.createQueue({ redis: client, testMode: true });
+    // Create a stub for the Kue queue
+    queueStub = {
+      create: sinon.stub().returnsThis(), // Stub create method
+      save: sinon.stub().callsFake((callback) => callback()), // Stub save method
+      on: sinon.stub(), // Stub on method
+    };
   });
 
-  afterEach((done) => {
-    // Clear the queue and exit test mode after each test
-    queue.testMode.clear(done);
-    queue.testMode.exit();
+  it('should throw an error if jobs is not an array', () => {
+    expect(() => {
+      createPushNotificationsJobs({}, queueStub);
+    }).to.throw('Jobs is not an array');
   });
 
-  it('should create jobs for each notification', (done) => {
-    const notifications = [
-      {
-        phoneNumber: '123',
-        message: 'Message 1',
-      },
-      {
-        phoneNumber: '456',
-        message: 'Message 2',
-      },
-      {
-        phoneNumber: '789',
-        message: 'Message 3',
-      },
+  it('should create jobs and save them to the queue', () => {
+    const jobs = [
+      { data: { message: 'Job 1' } },
+      { data: { message: 'Job 2' } },
+      { data: { message: 'Job 3' } },
     ];
 
-    createPushNotificationsJobs(notifications, queue);
+    // Call the function
+    createPushNotificationsJobs(jobs, queueStub);
 
-    // Wait for the jobs to be processed
-    setTimeout(() => {
-      // Assert that jobs are created in the queue
-      assert.strictEqual(queue.testMode.jobs.length, notifications.length);
+    // Ensure that the create and save methods were called for each job
+    jobs.forEach((jobData) => {
+      // Ensure that create method is called with proper data
+      expect(queueStub.create.calledWith('push_notification_code_3', jobData)).to.be.true;
+      // Ensure that save method is called after create
+      expect(queueStub.save.calledAfter(queueStub.create)).to.be.true;
 
-      // Assert that each job has correct data
-      notifications.forEach((notification, index) => {
-        const job = queue.testMode.jobs[index];
-        assert.strictEqual(job.type, 'push_notification_code_3');
-        assert.deepStrictEqual(job.data, notification);
-      });
+      // Get the callback function passed to create method
+      const saveCallback = queueStub.create.args[0][0];
 
-      done();
-    }, 1000); // Adjust timeout as needed
+      // Simulate job completion
+      saveCallback(null);
+    });
   });
 
-  it('should handle empty notifications array', (done) => {
-    createPushNotificationsJobs([], queue);
-
-    // Wait for the jobs to be processed
-    setTimeout(() => {
-      // Assert that no jobs are created in the queue
-      assert.strictEqual(queue.testMode.jobs.length, 0);
-
-      done();
-    }, 1000); // Adjust timeout as needed
-  });
+  // Add more test cases as needed
 });
